@@ -1,0 +1,385 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:readmore/readmore.dart';
+import 'package:travelappuser/view/homepage/interestpointdetail.dart';
+import 'package:travelappuser/view/homepage/widgets/detail_info.dart';
+import 'package:travelappuser/view/homepage/widgets/image_container.dart';
+import 'package:travelappuser/view/homepage/widgets/offeritem.dart';
+import 'package:travelappuser/viewmodel/authentification.dart';
+import 'package:travelappuser/viewmodel/homepage/detailservice.dart';
+import 'package:travelappuser/viewmodel/interestpointservice.dart';
+
+class HotelDetail extends StatelessWidget {
+  final Map<String, dynamic> data;
+  final controllerServiceDetail = Get.find<DetailService>();
+  final controllerAuth = Get.find<Authentification>();
+  final controllerInterst = Get.put(InterestPointService);
+  HotelDetail({super.key, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    List<dynamic> interstPoint = data['listchildren'];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: Stack(children: [
+        ListView(
+          children: <Widget>[
+            ImageContainer(
+              data: data,
+            ),
+            DetailInfo(
+              location: data["location"],
+              price: data['pricepernight'] != null ? data['pricepernight'] : "",
+              rawRating: "5 0",
+              title: data['name'],
+            )
+            /*  Container(
+                  foregroundDecoration: const BoxDecoration(color: Colors.black26),
+                  height: 400,
+                  child: Image.network(data['urlImages'][0], fit: BoxFit.cover)),*/
+            ,
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  //const SizedBox(height: 250),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      data["ispetfriendly"] != null
+                          ? data['ispetfriendly'] == true
+                              ? offerItem(Icons.pets, "pet friedly")
+                              : Container()
+                          : Container(),
+                      data["wifi"] != null
+                          ? data['wifi'] == true
+                              ? offerItem(Icons.wifi, "free wifi")
+                              : Container()
+                          : Container(),
+                      data['category'] == "hotel"
+                          ? offerItem(
+                              Icons.smoking_rooms_rounded, "smoking place")
+                          : Container(),
+                      data['accespiscine'] != null
+                          ? data['accespiscine'] == true
+                              ? offerItem(Icons.pool, "piscine")
+                              : Container()
+                          : Container(),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "Amenties".toUpperCase(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 16.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 5),
+                      decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.grey.shade100),
+                              width: 150,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.network(
+                                        "https://s.wsj.net/public/resources/images/PJ-BE629_RESTO_G_20120104173517.jpg"),
+                                  ),
+                                  const Text("Restaurent"),
+                                  Text("${data["restaurentnumber"]} available")
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(10)),
+                              width: 150,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.network(
+                                        "https://cdn.5280.com/2022/07/JBar_2021_1_0426_Hotel-Jerome-1107x720.jpg"),
+                                  ),
+                                  const Text("Bar"),
+                                  Text("${data["barnumber"]} available"),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(10)),
+                              width: 150,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.network(
+                                        "https://i.pinimg.com/236x/66/b0/4c/66b04c413a6beab711e38a90ff90cfef.jpg"),
+                                  ),
+                                  const Text("Salle de Jeux"),
+                                  Text(
+                                      "${data["salledejeuxnumber"]} available"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text("About".toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        const SizedBox(height: 1.0),
+                        ReadMoreText(
+                          data['about'],
+                          trimLines: 2,
+                          colorClickableText: Colors.pink,
+                          trimMode: TrimMode.Line,
+                          trimCollapsedText: '..Read More',
+                          trimExpandedText: ' Less',
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                              fontSize: 16, color: Colors.grey.shade600),
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          "Interst Point".toUpperCase(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16.0),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 5),
+                          decoration: BoxDecoration(
+                              color: Colors.blue.shade100,
+                              borderRadius: BorderRadius.circular(10)),
+                          height: 160,
+                          child: ListView.builder(
+                              itemCount: interstPoint.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return FutureBuilder(
+                                    future: FirebaseFirestore.instance
+                                        .collection("interestpoint")
+                                        .where("id",
+                                            isEqualTo: interstPoint[index])
+                                        .get(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        Map<String, dynamic> aux = snapshot
+                                            .data!.docChanges.first.doc
+                                            .data() as Map<String, dynamic>;
+                                        print(snapshot
+                                            .data!.docChanges.first.doc
+                                            .data());
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 8, left: 8, top: 5),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              controllerServiceDetail.data =
+                                                  aux;
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) {
+                                                return InterestPointDetail(
+                                                  data: aux,
+                                                );
+                                              }));
+                                            },
+                                            child: Container(
+                                              width: 150,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 3,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 8.0,
+                                                            left: 8,
+                                                            right: 8),
+                                                    child: Image.network(
+                                                        snapshot
+                                                                .data!
+                                                                .docChanges
+                                                                .first
+                                                                .doc
+                                                                .data()?[
+                                                            'urlImage']),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10),
+                                                    child: Text(snapshot.data!
+                                                        .docChanges.first.doc
+                                                        .data()?['name']),
+                                                  ),
+                                                  Expanded(
+                                                    child: Row(
+                                                      children: [
+                                                        const Icon(
+                                                            Icons.location_on,
+                                                            color: Colors.blue),
+                                                        Text(snapshot
+                                                                .data!
+                                                                .docChanges
+                                                                .first
+                                                                .doc
+                                                                .data()?[
+                                                            'location'])
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return const Text("no interest point");
+                                      }
+                                    });
+                              }),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Contact".toUpperCase(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16.0),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.mail, color: Colors.blue),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(data['email'],
+                                style: const TextStyle(fontSize: 16))
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.phone, color: Colors.blue),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(data['phone'],
+                                style: const TextStyle(fontSize: 16))
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 100,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        data["booking"] == true
+            ? Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 32.0,
+                      ),
+                    ),
+                    child: const Text(
+                      "Book Now",
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                    onPressed: () {
+                      controllerServiceDetail.booking(
+                          context, data['category']);
+                    },
+                  ),
+                ),
+              )
+            : Container(),
+        Positioned(
+          top: 50,
+          left: 20,
+          child: FadeInUp(
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
