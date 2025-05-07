@@ -11,6 +11,7 @@ class FavoriteCard extends StatelessWidget {
   final controllerDetailService = Get.find<DetailService>();
   @override
   Widget build(BuildContext context) {
+    List<dynamic> list = data['urlImages'] as List;
     return Padding(
         padding: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
         child: InkWell(
@@ -34,10 +35,12 @@ class FavoriteCard extends StatelessWidget {
                       children: <Widget>[
                         AspectRatio(
                           aspectRatio: 2,
-                          child: Image.network(
-                            data['urlImages'][0],
-                            fit: BoxFit.cover,
-                          ),
+                          child: list.isNotEmpty
+                              ? Image.network(
+                                  list[0],
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(Icons.image_not_supported_outlined),
                         ),
                         Container(
                           color: Colors.white,

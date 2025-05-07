@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/FLUTTER/TravelApp/travel_app/travelAppUser/travelappuser/linux"
+    "cmake.sourceDirectory": "C:/FLUTTER/TravelApp/travel_app/travelAppUser/travelappuser/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

@@ -36,6 +36,7 @@ class Favorites extends StatelessWidget {
                       list.add(a.data());
                     }
                   }
+
                   return ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (context, index) {
@@ -47,6 +48,8 @@ class Favorites extends StatelessWidget {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final aux = snapshot.data!.docs.first.data();
+                              print("here");
+                              print(aux);
                               return GestureDetector(
                                 child: FavoriteCard(data: aux),
                                 onTap: () async {

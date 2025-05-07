@@ -8,12 +8,14 @@ import 'package:travelappuser/view/welcomescreen/welcomescreen.dart';
 import 'package:travelappuser/viewmodel/authentification.dart';
 import 'package:travelappuser/viewmodel/settingsservice.dart';
 import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   SharedPreferences prefs = await SharedPreferences.getInstance();
+
   bool isConnected = prefs.getBool('connected') ?? false;
   final controller = Get.put(Authentification());
   final controllerSettings = Get.put(SettingsService());
@@ -27,6 +29,7 @@ void main() async {
     await controllerSettings.loadProfile();
   }
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: isConnected == false ? WelcomeScreen() : NavigationBarApp(),
   ));
 }
